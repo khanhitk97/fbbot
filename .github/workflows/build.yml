@@ -1,0 +1,35 @@
+name: Build and Release EXE
+
+on:
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công bất cứ lúc nào
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write # Cấp quyền tạo Release
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build file EXE
+        run: npm run build
+
+      - name: Create Release and Upload EXE
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: "Release v1.0.0"
+          files: dist/fb-bot.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
